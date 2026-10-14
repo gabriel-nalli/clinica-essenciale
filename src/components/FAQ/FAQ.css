@@ -1,0 +1,104 @@
+.faq-section {
+  padding: 10rem 0;
+  color: var(--base-500);
+  background: var(--base-100);
+}
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 8rem;
+}
+
+.faq-heading {
+  position: sticky;
+  top: 7rem;
+  align-self: start;
+}
+
+.faq-heading .mono {
+  margin-bottom: 1.5rem;
+  color: var(--base-350);
+}
+
+.faq-heading h2 {
+  max-width: 36rem;
+}
+
+.faq-list {
+  border-top: 1px solid rgba(112, 78, 43, 0.25);
+}
+
+.faq-list details {
+  border-bottom: 1px solid rgba(112, 78, 43, 0.25);
+}
+
+.faq-list summary {
+  display: grid;
+  grid-template-columns: 3rem 1fr 2rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 2rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.2rem;
+  font-weight: 550;
+}
+
+.faq-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-index {
+  color: var(--base-350);
+  font-family: "DM Mono", monospace;
+  font-size: 0.75rem;
+}
+
+.faq-plus {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgba(112, 78, 43, 0.3);
+  border-radius: 50%;
+  transition: transform 0.35s ease, background 0.35s ease;
+}
+
+.faq-list details[open] .faq-plus {
+  color: var(--base-100);
+  background: var(--brand-coffee);
+  transform: rotate(45deg);
+}
+
+.faq-list details > p {
+  max-width: 42rem;
+  padding: 0 3rem 2rem 4rem;
+  color: var(--base-350);
+}
+
+@media (max-width: 1000px) {
+  .faq-section {
+    padding: 7rem 0;
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .faq-heading {
+    position: static;
+  }
+
+  .faq-list summary {
+    grid-template-columns: 2rem 1fr 2rem;
+    padding: 1.5rem 0;
+    font-size: 1rem;
+  }
+
+  .faq-list details > p {
+    padding: 0 1rem 1.5rem 3rem;
+    font-size: 0.9rem;
+  }
+}
