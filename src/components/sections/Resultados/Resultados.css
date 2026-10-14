@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Resultados — "O instrumento" (D3 §9.8). Superfície: blush.
+   Mobile-first; só min-width. As fotos de resultado são T0: nenhum filtro,
+   máscara decorativa ou grão — apenas o recorte retangular de 4px.
+   ========================================================================== */
+
+/* posição do comparador: número registrado => transitável (toques / end-stops) */
+@property --pos {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 50;
+}
+
+.res {
+  --res-stops-h: 44px; /* linha "Antes / Depois" */
+  --res-scale-h: 28px; /* régua (10px de respiro + 18px) */
+}
+
+/* ---------- cabeçalho ---------- */
+.res__head { row-gap: var(--s4); margin-bottom: var(--s6); }
+.res__title { grid-column: 1 / -1; font-size: var(--fs-h2); }
+.res__intro { grid-column: 1 / -1; color: var(--coffee); max-width: 62ch; }
+
+/* ---------- trilho (mobile/tablet): scroll-snap, o 2º slide espia ---------- */
+.res__track {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  /* sangra até as bordas da tela; o padding devolve a margem do grid e abriga os arcos */
+  margin-inline: calc(var(--margin) * -1);
+  margin-block: -12px;
+  padding: 12px var(--margin);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--margin);
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.res__track::-webkit-scrollbar { display: none; }
+
+.res__slide {
+  flex: 0 0 min(calc((100% + 2 * var(--margin)) * 0.84), 460px); /* ≈ 84% da tela */
+  min-width: 0;
+  scroll-snap-align: start;
+}
+/* o slide 2 não tem a linha Antes/Depois nem a régua: espaçadores mantêm quadros e legendas alinhados */
+.res__slide--single { padding-top: var(--res-stops-h); }
+.res__slide--single .res__cap { margin-top: calc(var(--res-scale-h) + 12px); }
+
+/* ---------- o instrumento ---------- */
+.cmp { position: relative; margin: 0; transition: --pos 250ms var(--ease-out); }
+.cmp.is-dragging,
+.cmp.is-nudging { transition: none; }
+
+.cmp__stops { display: flex; align-items: center; justify-content: space-between; min-height: var(--res-stops-h); }
+.cmp__stop {
+  min-height: 44px;
+  padding: 0;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  -webkit-tap-highlight-color: transparent;
+}
+.cmp__stop:hover { text-decoration-color: var(--ink); }
+
+.cmp__stage { position: relative; -webkit-user-select: none; user-select: none; }
+@media (pointer: fine) { .cmp__stage { cursor: ew-resize; } }
+
+.cmp__frame,
+.res__frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-img);
+  background: var(--sand);
+}
+.cmp__frame picture,
+.res__frame picture { position: absolute; inset: 0; }
+.cmp__img,
+.res__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+/* res-02: a fonte tem uma coluna escura de 2px na borda esquerda; recorte retangular
+   (sem escala perceptível) de 2/584 px — a foto em si segue sem filtro nem máscara */
+.res__img { width: 100%; }
+.cmp__before {
+  position: absolute; inset: 0;
+  clip-path: inset(0 calc(100% - var(--pos) * 1%) 0 0);
+}
+
+/* divisor: 2px marfim + anel de tinta 1px (contraste sobre a pele) */
+.cmp__divider {
+  position: absolute; top: 0; bottom: 0;
+  left: calc(var(--pos) * 1%);
+  width: 2px; margin-left: -1px;
+  background: var(--ivory);
+  box-shadow: 0 0 0 1px var(--ink);
+  pointer-events: none;
+}
+
+/* knob: elipse 40x56 (proporção da marca), anel de tinta 1,5px; área de toque 56x72 */
+.cmp__knob {
+  position: absolute; top: 50%;
+  left: clamp(20px, calc(var(--pos) * 1%), calc(100% - 20px));
+  translate: -50% -50%;
+  z-index: 2;
+  display: grid; place-items: center;
+  width: 56px; height: 72px;
+  touch-action: none;
+  cursor: ew-resize;
+}
+.cmp__ell {
+  display: grid; place-items: center;
+  width: 40px; height: 56px;
+  border-radius: 50%;
+  background: var(--ivory);
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  font-size: 18px; line-height: 1;
+  font-family: var(--font-sans);
+}
+.cmp:has(input:focus-visible) .cmp__ell { outline: 2px solid var(--coffee); outline-offset: 3px; }
+
+/* o input real: invisível, focável, teclas nativas (±1, PgUp/PgDn ±10, Home/End) */
+.cmp__range { pointer-events: none; }
+
+/* régua de calibre: 11 marcas + triângulo que acompanha --pos (decorativa) */
+.cmp__scale { position: relative; height: 18px; margin-top: 10px; }
+.cmp__tick {
+  position: absolute; top: 0;
+  width: 1px; height: 4px; margin-left: -0.5px;
+  background: var(--coffee);
+}
+.cmp__tick--major { height: 8px; }
+.js-motion .cmp__tick[data-reveal="fade"] { transition-delay: calc(0.9s + var(--i, 0) * 20ms); }
+.cmp__tri {
+  position: absolute; top: 10px;
+  left: calc(var(--pos) * 1%);
+  width: 8px; height: 6px; margin-left: -4px;
+  background: var(--coffee);
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+/* legenda: título + contador na mesma linha, dentro do próprio slide */
+.res__cap {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-top: 12px;
+}
+.res__cap-title { font-size: 1.0625rem; font-weight: 600; line-height: 1.3; }
+.res__count { flex: none; font-size: var(--fs-small); font-weight: 500; color: var(--coffee); white-space: nowrap; }
+
+/* ---------- slide 2 ---------- */
+.res__slide--single { margin: 0; }
+.res__frame-wrap { position: relative; }
+
+/* ---------- arcos de registro (cantos do quadro, 8px de afastamento) ---------- */
+.res .arcs { width: 20px; height: 20px; }
+.res .arcs path { vector-effect: none; stroke-width: 1.25; }
+.res__arc--tl, .cmp__arc--tl { top: -8px; left: -8px; }
+.res__arc--br, .cmp__arc--br { right: -8px; bottom: -8px; }
+/* desenham depois das molduras */
+.js-motion .res .arcs path { transition-delay: 0.55s; }
+.js-motion .res .arcs.is-in .arc-caramel { transition-delay: 0.7s; }
+@media (min-width: 768px) { .res .arcs { width: 28px; height: 28px; } }
+
+/* ---------- controles + disclaimer + CTA ---------- */
+.res__aside {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "ctrl cta" "disc disc";
+  align-items: center;
+  gap: var(--s4) var(--s3);
+  margin-top: var(--s5);
+}
+.res__ctrl { grid-area: ctrl; display: flex; gap: 8px; }
+.res__nav {
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink);
+  transition: border-color var(--d-small) var(--ease-out), background-color var(--d-small) var(--ease-out), opacity var(--d-small);
+  -webkit-tap-highlight-color: transparent;
+}
+.res__nav:hover { border-color: var(--ink); background: rgba(52, 37, 27, 0.04); }
+.res__nav[aria-disabled="true"] { opacity: 0.38; cursor: default; }
+.res__nav[aria-disabled="true"]:hover { border-color: var(--line-strong); background: none; }
+.res__cta { grid-area: cta; min-width: 0; }
+.res__cta .btn { width: 100%; }
+.res__disc { grid-area: disc; font-size: var(--fs-small); color: var(--coffee); line-height: 1.4; max-width: 44ch; }
+
+/* ---------- md: slides com teto; intro mais estreita ---------- */
+@media (min-width: 768px) {
+  .res__intro { grid-column: 1 / span 6; }
+  .res__head { margin-bottom: var(--s6); }
+  .res__aside { grid-template-columns: auto auto; justify-content: start; }
+  .res__cta .btn { width: auto; }
+}
+
+/* ---------- lg: os dois resultados visíveis, sem trilho ---------- */
+@media (min-width: 1024px) {
+  .res__head { margin-bottom: 40px; align-items: end; }
+  .res__title { grid-column: 1 / span 7; }
+  .res__intro { grid-column: 9 / span 4; align-self: end; }
+
+  .res__media {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .res__track { display: contents; }
+  .res__slide { flex: none; }
+  .res__slide--cmp { grid-column: 1 / span 5; }
+  .res__slide--single { grid-column: 6 / span 4; padding: 0; }
+  .res__slide--single .res__cap { margin-top: 12px; }
+  .res__aside {
+    grid-column: 10 / span 3;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "disc" "cta";
+    justify-items: start;
+    gap: var(--s5);
+    margin-top: 0;
+  }
+  .res__ctrl { display: none; }
+  .res__disc { max-width: 30ch; }
+}

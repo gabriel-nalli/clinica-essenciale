@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Footer — o cartão-índice (night). Mobile-first, min-width apenas.
+   Padding-bottom reserva o dock + safe area; o margin-bottom negativo faz o
+   night cobrir a faixa de padding do <body>, sem somar a reserva duas vezes.
+   ========================================================================== */
+
+.footer {
+  padding-top: var(--s8);
+  padding-bottom: calc(var(--dock-h) + var(--s5) + env(safe-area-inset-bottom));
+  margin-bottom: calc(-1 * (var(--dock-h) + env(safe-area-inset-bottom)));
+  color: var(--ivory);
+}
+
+/* ---------- linha 1: marca ---------- */
+.footer__brand { display: flex; align-items: center; gap: var(--s3); }
+.footer__brand img { width: 36px; height: 36px; flex: none; }
+.footer__name { font-size: 1rem; font-weight: 600; color: var(--ivory); }
+
+/* ---------- linha 2: slogan + navegação ---------- */
+.footer__top { margin-top: var(--s6); row-gap: var(--s6); align-items: end; }
+.footer__slogan {
+  grid-column: 1 / -1;
+  font-size: var(--fs-h2);
+  font-weight: 460;
+  font-stretch: 88%;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+  color: var(--ivory);
+}
+.footer__nav { grid-column: 1 / -1; }
+.footer__navlist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  column-gap: var(--gutter);
+  border-bottom: 1px solid var(--line-on-dark);
+}
+.footer__navlist li { position: relative; }
+.footer__navlist li::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: var(--line-on-dark); transform-origin: left center;
+  transition: transform var(--d-large) var(--ease-draw);
+}
+.footer__navlink {
+  display: flex; align-items: center;
+  min-height: 48px;
+  color: var(--ivory);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--d-small) var(--ease-out);
+}
+.footer__navlink:hover { text-decoration-color: var(--caramel); }
+
+/* ---------- linha 3: endereço + ícones ---------- */
+.footer__mid { margin-top: var(--s7); row-gap: var(--s5); }
+.footer__address {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--s1);
+  color: var(--stone);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+.footer__tel {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  color: var(--ivory);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--caramel);
+}
+.footer__tel:hover { text-decoration-color: var(--ivory); }
+
+.footer__social { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s3); }
+.footer__icon {
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  border: 1px solid rgba(246, 234, 226, 0.35);
+  border-radius: 50%;
+  color: var(--ivory);
+  transition: background-color var(--d-micro) var(--ease-out), color var(--d-micro) var(--ease-out), border-color var(--d-micro);
+}
+.footer__icon:hover { background: var(--ivory); border-color: var(--ivory); color: var(--night); }
+
+/* ---------- linha 4: "essenciale" gigante (a "base" da página) ---------- */
+.footer__word {
+  position: relative;
+  margin-top: var(--s7);
+  padding-top: var(--s4);
+  overflow: hidden; /* máscara da subida */
+}
+.footer__word::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: var(--line-on-dark); transform-origin: left center;
+  transition: transform var(--d-large) var(--ease-draw);
+}
+.footer__word-text {
+  /* fallback antes da hidratação; <FitText> ajusta ao fit exato */
+  font-size: min(26vw, 27.5rem);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-stretch: 75%;
+  letter-spacing: -0.02em;
+  line-height: 0.8;
+  padding-top: 0.08em;
+  color: var(--sand);
+}
+.js-motion .footer__word-text { transform: translateY(30%); }
+.js-motion .footer__word.is-in .footer__word-text {
+  transform: none;
+  transition: transform 1s var(--ease-out);
+}
+@keyframes footer-word-failsafe { to { transform: none; } }
+.js-motion .footer__word:not(.is-in) .footer__word-text { animation: footer-word-failsafe 0s 3s forwards; }
+
+/* ---------- linha 5: legal (13px, sempre visível) ---------- */
+.footer__legal {
+  margin-top: var(--s5);
+  display: flex; flex-wrap: wrap; column-gap: var(--s5); row-gap: var(--s1);
+  color: var(--stone);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ---------- md+ ---------- */
+@media (min-width: 768px) {
+  .footer__top { margin-top: var(--s7); }
+  .footer__legal { justify-content: space-between; }
+}
+
+/* ---------- lg+: slogan 1–7, nav 9–12; endereço à esquerda, ícones à direita ---------- */
+@media (min-width: 1024px) {
+  .footer { padding-bottom: var(--s6); margin-bottom: 0; }
+  .footer__slogan { grid-column: 1 / span 7; }
+  .footer__nav { grid-column: 9 / span 4; }
+  .footer__address { grid-column: 1 / span 6; }
+  .footer__social { grid-column: 9 / span 4; align-self: end; }
+  .footer__word { margin-top: var(--s8); }
+}

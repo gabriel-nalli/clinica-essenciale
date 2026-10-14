@@ -1,0 +1,254 @@
+/* ==========================================================================
+   Hero — "Abertura" (spec §9.4). Capa da ficha: kicker, H1, tagline, CTA,
+   abertura oval com arcos de registro e a ficha de diferenciais.
+   Mobile-first; breakpoints 768 / 1024 / 1440.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  padding-block: var(--s4) var(--s5); /* 16px sob a barra do topo (no fluxo) */
+}
+
+/* ---------- kicker bar ---------- */
+.hero__kicker {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-bottom: 12px;
+}
+.hero__kicker-text {
+  font-size: var(--fs-small);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--coffee);
+}
+.hero__num {
+  flex: none;
+  font-size: var(--fs-small);
+  font-weight: 560;
+  color: var(--earth);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* hairline desenhada (::after) — kicker, legenda e linhas da ficha */
+.hero__rule { position: relative; }
+.hero__rule::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
+}
+
+/* ---------- copy ---------- */
+.hero__title {
+  margin-top: var(--s6);
+  font-size: var(--fs-display);
+  font-weight: 470;
+  font-stretch: 84%;
+  letter-spacing: -0.022em;
+  line-height: 0.98;
+  /* reserva 3 linhas: troca tardia de fonte não empurra o resto */
+  min-height: calc(3 * 0.98em);
+  color: var(--ink);
+}
+/* máscara de linha do SplitText: não corta descendentes (ç, g) */
+.hero-line-mask { padding-bottom: 0.14em; margin-bottom: -0.14em; }
+
+.hero__tagline {
+  margin-top: var(--s5);
+  max-width: 34ch;
+  font-size: var(--fs-body-l);
+  line-height: 1.5;
+  color: var(--coffee);
+}
+
+.hero__actions {
+  margin-top: var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.hero__actions .btn { width: 100%; }
+.hero__more { justify-content: center; }
+.hero__more svg { transition: transform var(--d-small) var(--ease-out); }
+@media (hover: hover) {
+  .hero__more:hover svg { transform: translateY(2px); }
+}
+
+/* ---------- aperture (oval + arcos) ---------- */
+.hero__aperture {
+  position: relative;
+  width: min(100%, 26rem);
+  aspect-ratio: 73 / 100;
+  margin: var(--s7) auto 0;
+}
+.hero__oval {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: ellipse(50% 50% at 50% 50%);
+  background: var(--sand);
+}
+/* camada maior que a janela: a profundidade do ponteiro nunca revela a borda */
+.hero__depth { position: absolute; inset: -12px; }
+.hero__depth picture { width: 100%; height: 100%; }
+.hero__depth img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 38%;
+}
+/* arcos em unidades da viewBox (caixa 440 × 602,74 + 14 por lado), escala uniforme */
+.hero__arcs {
+  left: -3.182%;
+  top: -2.323%;
+  width: 106.364%;
+  height: 104.654%;
+  max-width: none; /* globals: svg { max-width: 100% } encolheria o SVG */
+}
+.hero .arcs path {
+  vector-effect: none; /* escala uniforme + pathLength=1: traço previsível em todos os navegadores */
+  stroke-width: 1.5;
+}
+
+/* ---------- ficha de diferenciais ---------- */
+.hero__ficha { margin-top: var(--s7); }
+.hero__ficha-title {
+  padding-bottom: 12px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--ink);
+}
+.hero__ficha-list { display: grid; grid-template-columns: minmax(0, 1fr); }
+.hero__cell {
+  display: grid;
+  grid-template-columns: 5.5ch minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  padding-block: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.hero__cell dt {
+  font-weight: 600;
+  color: var(--coffee);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.hero__cell dd { color: var(--ink); }
+
+@media (min-width: 768px) {
+  .hero__title { min-height: calc(2 * 0.98em); } /* tablet: o H1 cabe em 2 linhas */
+  .hero__kicker-text { font-size: 0.9375rem; }
+  .hero__actions { flex-direction: row; align-items: center; gap: var(--s6); }
+  .hero__actions .btn { width: auto; }
+  .hero__more { justify-content: flex-start; }
+  .hero__ficha-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gutter); }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    min-height: calc(100svh - var(--header-h));
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--s5); /* 24px sob o header fixo */
+  }
+  .hero__inner {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto 1fr auto;
+    column-gap: var(--gutter);
+  }
+  .hero__kicker { grid-column: 1 / -1; grid-row: 1; }
+  .hero__copy { grid-column: 1 / span 8; grid-row: 2; padding-top: var(--s7); }
+  .hero__title { margin-top: 0; max-width: 87.5%; min-height: calc(3 * 0.98em); }
+  .hero__tagline { margin-top: 28px; }
+  .hero__actions { margin-top: var(--s6); }
+  .hero__aperture {
+    grid-column: 9 / span 4;
+    grid-row: 2;
+    align-self: start;
+    justify-self: end;
+    margin: var(--s6) 0 0;
+    /* altura = min(38rem, 100svh − 19rem), com piso de 26rem; razão fixa 0,73 */
+    width: min(100%, max(19rem, calc((100svh - 19rem) * 0.73)), 27.74rem);
+  }
+  .hero__ficha { grid-column: 1 / -1; grid-row: 3; margin-top: var(--s6); }
+  .hero__ficha-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ==========================================================================
+   Entrada (signature 1): só com movimento permitido (html.js-motion).
+   Começa quando o preloader termina (html.intro-done) ou imediatamente em
+   visitas repetidas / sem preloader (data-intro != "run"). Sem polling de JS:
+   puro CSS. Fail-safe: se o JS do preloader travar, revela após 2,6s.
+   ========================================================================== */
+
+/* estado inicial */
+.js-motion .hero__fx { opacity: 0; }
+.js-motion .hero__oval { clip-path: ellipse(9% 12% at 50% 50%); }
+.js-motion .hero__depth img { transform: scale(1.12); }
+.js-motion .hero__rule::after { transform: scaleX(0); }
+
+@keyframes hero-fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes hero-fade-fs { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes hero-open { from { clip-path: ellipse(9% 12% at 50% 50%); } to { clip-path: ellipse(50% 50% at 50% 50%); } }
+@keyframes hero-open-fs { from { clip-path: ellipse(9% 12% at 50% 50%); } to { clip-path: ellipse(50% 50% at 50% 50%); } }
+@keyframes hero-settle { from { transform: scale(1.12); } to { transform: scale(1); } }
+@keyframes hero-settle-fs { from { transform: scale(1.12); } to { transform: scale(1); } }
+@keyframes hero-arc { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes hero-arc-fs { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes hero-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes hero-draw-fs { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* tempos base (--t) + escalonamento (--i, herdado da célula da ficha) */
+.hero__kicker { --t: 0s; }
+.hero__kicker-text { --t: 0.05s; }
+.hero__num { --t: 0.05s; }
+.hero__tagline { --t: 0.35s; }
+.hero__actions { --t: 0.42s; }
+.hero__ficha-title { --t: 0.4s; }
+.hero__cell { --t: 0.45s; }
+.hero__cell dt, .hero__cell dd { --t: 0.5s; }
+.hero__arcs .arc-coffee { --t: 0.2s; }
+.hero__arcs .arc-caramel { --t: 0.35s; }
+
+/* GO: visita repetida / sem preloader, ou preloader concluído */
+:is(html.js-motion:not([data-intro="run"]), html.js-motion.intro-done) .hero__fx {
+  animation: hero-fade 0.6s var(--ease-out) calc(var(--t, 0s) + var(--i, 0) * 50ms) both;
+}
+:is(html.js-motion:not([data-intro="run"]), html.js-motion.intro-done) .hero__oval {
+  animation: hero-open 0.8s var(--ease-out) 0s both;
+}
+:is(html.js-motion:not([data-intro="run"]), html.js-motion.intro-done) .hero__depth img {
+  animation: hero-settle 1.2s var(--ease-out) 0s both;
+}
+:is(html.js-motion:not([data-intro="run"]), html.js-motion.intro-done) .hero .arcs path {
+  animation: hero-arc 0.7s var(--ease-draw) var(--t, 0.2s) both;
+}
+:is(html.js-motion:not([data-intro="run"]), html.js-motion.intro-done) .hero__rule::after {
+  animation: hero-draw 0.9s var(--ease-draw) calc(var(--t, 0s) + var(--i, 0) * 50ms) both;
+}
+
+/* FAIL-SAFE: intro previsto mas ainda não concluído → mostra após o overlay sumir por CSS (2,6s) */
+html.js-motion[data-intro="run"]:not(.intro-done) .hero__fx {
+  animation: hero-fade-fs 0.6s var(--ease-out) calc(2.6s + var(--t, 0s) + var(--i, 0) * 50ms) both;
+}
+html.js-motion[data-intro="run"]:not(.intro-done) .hero__oval {
+  animation: hero-open-fs 0.8s var(--ease-out) 2.6s both;
+}
+html.js-motion[data-intro="run"]:not(.intro-done) .hero__depth img {
+  animation: hero-settle-fs 1.2s var(--ease-out) 2.6s both;
+}
+html.js-motion[data-intro="run"]:not(.intro-done) .hero .arcs path {
+  animation: hero-arc-fs 0.7s var(--ease-draw) calc(2.6s + var(--t, 0.2s)) both;
+}
+html.js-motion[data-intro="run"]:not(.intro-done) .hero__rule::after {
+  animation: hero-draw-fs 0.9s var(--ease-draw) calc(2.6s + var(--t, 0s) + var(--i, 0) * 50ms) both;
+}

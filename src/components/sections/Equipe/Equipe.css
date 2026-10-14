@@ -1,0 +1,138 @@
+/* ==========================================================================
+   Especialistas — as fichas profissionais (D3 §9.9). Superfície: paper.
+   Mobile: cartões compactos de 2 colunas (rostos visíveis cedo).
+   Retratos T0: sem filtro/máscara/grão; só o recorte retangular de 4px.
+   ========================================================================== */
+
+/* ---------- cabeçalho ---------- */
+.eq__head { row-gap: var(--s4); margin-bottom: var(--s6); }
+.eq__title { grid-column: 1 / -1; font-size: var(--fs-h2); }
+.eq__intro { grid-column: 1 / -1; color: var(--coffee); max-width: 62ch; }
+
+/* ---------- cartão (mobile: 148px | resto) ---------- */
+.eq__cards { row-gap: 0; }
+.eq-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  column-gap: var(--gutter);
+  align-items: start;
+  padding-block: var(--s5);
+  border-top: 1px solid var(--line);
+}
+.eq-card:first-child { padding-top: 0; border-top: 0; }
+
+/* retrato 3:4 + arcos de registro */
+.eq-card__portrait { position: relative; margin: 0; grid-column: 1; grid-row: 1; }
+.eq-card__frame {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-img);
+  background: var(--sand);
+}
+.eq-card__frame picture { display: block; width: 100%; height: 100%; }
+.eq-card__img { width: 100%; height: 100%; object-fit: cover; }
+
+.eq-card .arcs { width: 20px; height: 20px; }
+.eq-card .arcs path { vector-effect: none; stroke-width: 1.25; }
+.eq-card__arc--tl { top: -8px; left: -8px; }
+.eq-card__arc--br { right: -8px; bottom: -8px; }
+.js-motion .eq-card .arcs path { transition-delay: calc(0.5s + var(--i, 0) * 120ms); }
+.js-motion .eq-card .arcs.is-in .arc-caramel { transition-delay: calc(0.65s + var(--i, 0) * 120ms); }
+
+/* aba "Equipe Essenciale" + nome: oculta < 520px (continua no DOM); nunca sobre o rosto */
+.eq-card__tab {
+  display: none;
+  position: absolute; left: 8px; bottom: 8px;
+  max-width: calc(100% - 16px);
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--ivory);
+  color: var(--ink);
+  font-size: var(--fs-micro);
+  line-height: 1.3;
+}
+.eq-card__tab-label { display: block; color: var(--coffee); font-weight: 500; }
+.eq-card__tab-name { display: block; font-weight: 600; }
+
+/* coluna de identificação */
+.eq-card__id { grid-column: 2; grid-row: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); }
+/* min-height = altura da tag: o nome começa na mesma linha nos três cartões */
+.eq-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; width: 100%; min-height: 28px; }
+.eq-card__count { font-size: var(--fs-small); font-weight: 500; color: var(--earth); white-space: nowrap; }
+.eq-card__tag {
+  padding: 3px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: var(--fs-micro); font-weight: 600; line-height: 1.3;
+  white-space: nowrap;
+}
+.eq-card__name { font-size: var(--fs-name); font-weight: 480; line-height: 1.05; }
+.eq-card__role { font-size: var(--fs-small); font-weight: 500; line-height: 1.4; color: var(--coffee); }
+
+.eq-card__desc { grid-column: 1 / -1; margin-top: var(--s4); max-width: 46ch; }
+
+/* credenciais como linhas de dado */
+.eq-card__cred {
+  grid-column: 1 / -1;
+  margin-top: var(--s4);
+  border-top: 1px solid var(--line);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.eq-card__cred li {
+  display: flex; align-items: center; gap: 12px;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.35;
+}
+.eq-card__cred li::before {
+  content: "";
+  flex: none;
+  width: 10px; height: 1.5px;
+  background: var(--caramel); /* en-dash desenhado: só gráfico, nunca texto */
+}
+.eq-card__cred li:last-child { border-bottom: 0; } /* o cartão seguinte já traz a linha de separação */
+.js-motion .eq-card__cred li[data-reveal="fade"] { transition-delay: calc(var(--i, 0) * 40ms); }
+
+/* ---------- >= 520: a aba aparece ---------- */
+@media (min-width: 520px) {
+  .eq-card__tab { display: block; }
+}
+
+/* ---------- md: retrato maior à esquerda, texto à direita ---------- */
+@media (min-width: 768px) {
+  .eq__intro { grid-column: 1 / span 6; }
+  .eq-card {
+    grid-template-columns: 220px minmax(0, 1fr);
+    column-gap: var(--s6);
+    padding-block: var(--s6);
+  }
+  .eq-card .arcs { width: 28px; height: 28px; }
+  .eq-card { grid-template-rows: auto auto auto 1fr; } /* o excesso de altura do retrato fica na última linha */
+  .eq-card__portrait { grid-row: 1 / span 4; }
+  .eq-card__id { grid-row: 1; }
+  .eq-card__desc { grid-column: 2; }
+  .eq-card__cred { grid-column: 2; }
+}
+
+/* ---------- lg: três cartões iguais (4 colunas cada) ---------- */
+@media (min-width: 1024px) {
+  .eq__head { margin-bottom: var(--s7); }
+  .eq__title { grid-column: 1 / span 8; }
+  .eq__intro { grid-column: 9 / span 4; align-self: end; }
+
+  .eq-card {
+    grid-column: span 4;
+    display: block;
+    padding: 0;
+    border-top: 0;
+  }
+  .eq-card:first-child { padding-top: 0; }
+  .eq-card__frame { /* 3:4 em toda a largura da coluna */ }
+  .eq-card__id { margin-top: var(--s5); gap: var(--s3); }
+  .eq-card__meta { justify-content: space-between; }
+  .eq-card__desc { margin-top: var(--s4); }
+  .eq-card__cred { margin-top: var(--s5); }
+  .eq-card__cred li:last-child { border-bottom: 1px solid var(--line); }
+}

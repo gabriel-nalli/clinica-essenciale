@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Contato — o cartão de endereço (sand). Mobile-first, min-width apenas.
+   ========================================================================== */
+
+.contato__grid { row-gap: var(--s5); }
+
+.contato__title {
+  grid-column: 1 / -1;
+  font-size: var(--fs-h2);
+  font-weight: 460;
+  font-stretch: 88%;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+
+.contato__info {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--s5);
+}
+
+/* o ponto de referência é a linha mais útil de orientação: vem primeiro */
+.contato__landmark {
+  max-width: 22ch;
+  font-size: var(--fs-lead);
+  font-weight: 470;
+  font-stretch: 94%;
+  letter-spacing: -0.008em;
+  line-height: 1.3;
+}
+
+/* endereço como dado: linhas com fios, numerais tabulares */
+.contato__address {
+  align-self: stretch;
+  display: block;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.contato__row {
+  display: flex; align-items: center;
+  min-height: 48px;
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-body);
+}
+.contato__tel {
+  display: flex; align-items: center;
+  min-height: 64px;
+  border-top: 1px solid var(--line);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 500;
+  font-stretch: 90%;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--coffee);
+}
+.contato__tel:hover { text-decoration-color: var(--caramel); }
+
+.contato__hours {
+  max-width: 36ch;
+  color: var(--coffee);
+  font-size: var(--fs-body);
+}
+
+.contato__cta { align-self: stretch; }
+.contato__btn { width: 100%; min-height: 52px; }
+@media (min-width: 768px) {
+  .contato__cta { align-self: flex-start; }
+  .contato__btn { width: auto; min-height: 56px; }
+}
+
+/* ---------- mapa ---------- */
+.contato__map {
+  grid-column: 1 / -1;
+  position: relative;
+  margin-top: var(--s4);
+}
+.contato__frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-img);
+}
+@media (min-width: 768px) { .contato__frame { aspect-ratio: 4 / 3; } }
+
+/* fachada: placeholder sand com uma grade fina, sem custo de rede */
+.contato__facade {
+  position: absolute; inset: 0;
+  background-color: #d9cfc6;
+  background-color: color-mix(in srgb, var(--sand) 82%, var(--stone));
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.contato__iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  filter: grayscale(1) sepia(0.25) contrast(0.92) brightness(1.04);
+  opacity: 0;
+  transition: opacity var(--d-med) var(--ease-out);
+}
+.contato__iframe.is-loaded { opacity: 1; }
+
+/* pin: a marca, centrada e decorativa (não captura toques do mapa) */
+.contato__pin {
+  position: absolute; left: 50%; top: 50%;
+  width: 56px; height: 56px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 6px 10px rgba(52, 37, 27, 0.18));
+}
+.js-motion .contato__pin {
+  opacity: 0;
+  transform: translate(-50%, calc(-50% - 12px));
+}
+.js-motion .contato__frame.is-in ~ .contato__pin {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--d-med) var(--ease-out) 0.7s, transform var(--d-med) var(--ease-out) 0.7s;
+}
+/* fail-safe: se o observer nunca rodar, o pin aparece depois de 3s */
+@keyframes contato-pin-failsafe { to { opacity: 1; transform: translate(-50%, -50%); } }
+.js-motion .contato__frame:not(.is-in) ~ .contato__pin { animation: contato-pin-failsafe 0s 3s forwards; }
+
+/* arcos de registro: quartos de arco a 8px do canto do quadro */
+.contato__arc { width: 20px; height: 20px; z-index: 1; }
+.contato__arc--tl { top: -8px; left: -8px; }
+.contato__arc--br { bottom: -8px; right: -8px; }
+@media (min-width: 768px) { .contato__arc { width: 28px; height: 28px; } }
+@keyframes contato-arc-failsafe { to { stroke-dashoffset: 0; } }
+.js-motion .contato__arc:not(.is-in) path { animation: contato-arc-failsafe 0s 3s forwards; }
+
+/* ---------- lg+: título e info nas colunas 1–5, mapa nas 7–12 ---------- */
+@media (min-width: 1024px) {
+  .contato__grid { row-gap: var(--s6); }
+  .contato__title { grid-column: 1 / span 5; grid-row: 1; }
+  .contato__info { grid-column: 1 / span 5; grid-row: 2; }
+  .contato__map { grid-column: 7 / span 6; grid-row: 2; margin-top: 0; align-self: start; }
+}

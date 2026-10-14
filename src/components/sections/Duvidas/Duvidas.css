@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Dúvidas — cinco perguntas numeradas (paper). Mobile-first, min-width apenas.
+   ========================================================================== */
+
+.duvidas__grid { row-gap: var(--s6); }
+
+.duvidas__title {
+  grid-column: 1 / -1;
+  font-size: var(--fs-h2);
+  font-weight: 460;
+  font-stretch: 88%;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+
+.duvidas__list {
+  grid-column: 1 / -1;
+  border-bottom: 1px solid var(--line);
+  /* anima a altura de ::details-content onde há suporte; senão abre instantaneamente */
+  interpolate-size: allow-keywords;
+}
+
+.duvidas__item { position: relative; }
+.duvidas__item::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: var(--line); transform-origin: left center;
+  transition: transform var(--d-large) var(--ease-draw);
+}
+
+/* ---------- pergunta ---------- */
+.duvidas__summary {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
+  column-gap: var(--s3);
+  align-items: center;
+  min-height: 64px;
+  padding-block: 14px;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.duvidas__summary::-webkit-details-marker { display: none; }
+.duvidas__summary::marker { content: ""; }
+.duvidas__summary:focus-visible { outline-offset: -3px; }
+
+.duvidas__idx {
+  color: var(--earth);
+  font-size: var(--fs-small);
+  font-weight: 560;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.duvidas__q {
+  font-size: var(--fs-body-l);
+  font-weight: 520;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.duvidas__plus {
+  justify-self: end;
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+  transition: transform var(--d-small) var(--ease-inout), color var(--d-small);
+}
+.duvidas__summary:hover .duvidas__plus { color: var(--coffee); }
+.duvidas__item[open] .duvidas__plus { transform: rotate(45deg); }
+
+/* ---------- resposta ---------- */
+.duvidas__a {
+  padding: 0 calc(1.5rem + var(--s3)) var(--s5) calc(2rem + var(--s3));
+}
+.duvidas__a p {
+  max-width: 60ch;
+  color: var(--coffee);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+.duvidas__link {
+  color: var(--ink);
+  font-weight: 560;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--caramel);
+}
+.duvidas__link:hover { text-decoration-color: var(--ink); }
+
+@supports (interpolate-size: allow-keywords) {
+  .duvidas__item::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 0.36s var(--ease-inout), content-visibility 0.36s allow-discrete;
+  }
+  .duvidas__item[open]::details-content { block-size: auto; }
+}
+
+/* ---------- md+: respiro maior na resposta ---------- */
+@media (min-width: 768px) {
+  .duvidas__summary { grid-template-columns: 3rem minmax(0, 1fr) 2rem; }
+  .duvidas__a { padding-left: calc(3rem + var(--s3)); padding-right: calc(2rem + var(--s3)); }
+}
+
+/* ---------- lg+: título fixo nas colunas 1–4, acordeão nas 6–12 ---------- */
+@media (min-width: 1024px) {
+  .duvidas__title {
+    grid-column: 1 / span 4;
+    align-self: start;
+    position: sticky;
+    top: 96px;
+  }
+  .duvidas__list { grid-column: 6 / span 7; }
+}

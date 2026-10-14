@@ -1,0 +1,91 @@
+/* ==========================================================================
+   A clínica — o resumo (spec §9.5): manifesto (1º momento serifado),
+   "Por que Essenciale" e as 7 tags como links reais com cue ↘.
+   ========================================================================== */
+
+.clinica__grid { row-gap: var(--s7); }
+.clinica__title,
+.clinica__why,
+.clinica__scope { grid-column: 1 / -1; }
+
+/* manifesto */
+.clinica__title {
+  font-size: var(--fs-manifesto);
+  font-weight: 420;
+  font-stretch: 94%;
+  letter-spacing: -0.012em;
+  line-height: 1.14;
+}
+/* a cláusula final fala em Newsreader Italic (a classe .serif vem do globals) */
+.clinica__title .serif {
+  font-size: 1.06em;
+  color: var(--coffee);
+}
+
+/* "Por que Essenciale" — parágrafo */
+.clinica__why {
+  max-width: 36ch;
+  font-size: var(--fs-body-l);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* escopo: lista de links; hairlines compartilhadas (margem -1px) */
+.clinica__scope {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding-top: 1px;
+}
+.clinica__scope li {
+  margin-top: -1px;
+  border-block: 1px solid var(--line);
+}
+.clinica__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+  min-height: 48px;
+  padding-block: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.25;
+  /* respiro para o anel de foco sem deslocar o texto da borda da coluna */
+  margin-inline: -6px;
+  padding-inline: 6px;
+  outline-offset: 0;
+}
+.clinica__label {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  padding-bottom: 2px;
+  transition: background-size var(--d-small) var(--ease-inout);
+}
+.clinica__cue {
+  flex: none;
+  color: var(--earth);
+  transition: transform var(--d-small) var(--ease-out);
+}
+@media (hover: hover) {
+  .clinica__link:hover .clinica__label { background-size: 100% 1px; }
+  .clinica__link:hover .clinica__cue { transform: translate(2px, 2px); }
+}
+.clinica__link:focus-visible .clinica__label { background-size: 100% 1px; }
+.clinica__link:focus-visible .clinica__cue { transform: translate(2px, 2px); }
+
+@media (min-width: 768px) {
+  .clinica__link { font-size: 1.0625rem; gap: var(--s3); }
+  .clinica__why { grid-column: 1 / span 5; }
+}
+
+@media (min-width: 1024px) {
+  .clinica__grid { row-gap: var(--s8); }
+  /* "02" pende na coluna 1 (head bar); o recuo vem do início na coluna 3 */
+  .clinica__title { grid-column: 3 / span 9; grid-row: 1; }
+  .clinica__why { grid-column: 3 / span 4; grid-row: 2; }
+  .clinica__scope {
+    grid-column: 8 / span 5;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

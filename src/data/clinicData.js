@@ -3,8 +3,9 @@ export const clinic = {
   shortName: "Essenciale",
   phone: "(88) 98220-2548",
   phoneHref: "tel:+5588982202548",
+  // Chat direto (antes apontava para o catálogo do WhatsApp). Mensagem pré-preenchida.
   whatsapp:
-    "https://www.whatsapp.com/catalog/558882202548/?app_absent=0&utm_source=ig",
+    "https://wa.me/5588982202548?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Essenciale%20e%20gostaria%20de%20agendar%20uma%20avalia%C3%A7%C3%A3o.",
   instagram: "https://www.instagram.com/essencialemn/",
   mapUrl:
     "https://www.google.com/maps/search/?api=1&query=R.+Raul+Nogueira%2C+63%2C+Centro%2C+Morada+Nova%2C+CE%2C+62940-035",
@@ -104,7 +105,7 @@ export const team = [
     specialties: "Estética facial e corporal",
     description:
       "Cuidado atento para construir protocolos de pele e corpo de acordo com a necessidade e o momento de cada pessoa.",
-    image: "/images/essenciale/generated/daynara-profissional-v2.webp",
+    image: "/images/essenciale/optimized/daynara-elen.webp", // foto real (a versão gerada por IA foi descartada)
     alt: "Daynara Elen com jaleco branco, esteticista da Clínica Essenciale",
     imagePosition: "center 16%",
   },

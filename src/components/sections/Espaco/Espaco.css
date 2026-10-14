@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Espaço — interlúdio noturno (gallery-callout + cta-window-essenciale)
+   Movimento A: faixa da jornada · Movimento B: "Essenciale" sobre o horizonte
+   Mobile-first; só min-width (768 / 1024 / 1440). Nada de texto sobre foto.
+   ========================================================================== */
+
+.espaco { position: relative; color: var(--ivory); }
+
+/* ---------- Movimento A: cabeçalho + declaração ---------- */
+.espaco__sub { color: var(--stone); font-weight: 500; }
+
+.espaco__intro { row-gap: var(--s5); align-items: end; margin-bottom: var(--s7); }
+.espaco .espaco__statement {
+  grid-column: 1 / -1;
+  font-size: var(--fs-h3);
+  font-stretch: 92%;
+  font-weight: 420;
+  letter-spacing: -0.016em;
+  line-height: 1.1;
+  color: var(--ivory);
+}
+.espaco__aside { grid-column: 1 / -1; display: grid; gap: var(--s2); justify-items: start; }
+.espaco__note { font-size: var(--fs-small); line-height: 1.4; color: var(--stone); max-width: 34ch; }
+.espaco .espaco__link { color: var(--ivory); text-decoration-color: rgba(246, 234, 226, 0.6); }
+.espaco .espaco__link:hover { text-decoration-color: var(--caramel); }
+
+@media (min-width: 1024px) {
+  .espaco__intro { margin-bottom: var(--s8); }
+  .espaco .espaco__statement { grid-column: 1 / span 8; }
+  .espaco__aside { grid-column: 10 / span 3; }
+}
+
+/* ---------- Faixa da jornada ---------- */
+.espaco__strip { row-gap: var(--s6); }
+.espaco__item { grid-column: span 2; min-width: 0; }
+@media (min-width: 1024px) { .espaco__item { grid-column: span 3; } }
+
+.espaco__fig { margin: 0; }
+.espaco__frame {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-img);
+  overflow: hidden;
+  background: #1b130b;
+}
+.espaco__img { width: 100%; height: 100%; object-fit: cover; }
+
+.espaco__figcap { position: relative; margin-top: 14px; padding-top: 12px; }
+/* o fio atravessa a faixa entre molduras e legendas (estende-se sobre a calha, exceto no último da linha) */
+.espaco__rule {
+  position: absolute; top: 0; left: 0;
+  height: 1px; width: calc(100% + var(--gutter));
+  background: var(--line-on-dark);
+  transform-origin: left center;
+}
+.espaco__item:nth-child(even) .espaco__rule { width: 100%; }
+@media (min-width: 768px) {
+  .espaco__item:nth-child(even) .espaco__rule { width: calc(100% + var(--gutter)); }
+  .espaco__item:last-child .espaco__rule { width: 100%; }
+}
+.espaco__meta { display: grid; gap: 4px; }
+.espaco__idx { font-size: var(--fs-small); font-weight: 600; line-height: 1.2; color: var(--caramel); }
+.espaco__cap { font-size: var(--fs-small); line-height: 1.4; color: var(--stone); text-wrap: pretty; }
+
+/* ---------- Movimento B: palavra sobre o horizonte ---------- */
+/* A máscara é só a borda inferior (= borda superior do panorama); as laterais respiram p/ o itálico. */
+.espaco__horizon {
+  container-type: inline-size;
+  margin-top: clamp(4rem, 2.6rem + 6vw, 8.5rem);
+  clip-path: inset(-60% -4% 0 -4%);
+}
+/* O itálico sangra ~1% além do avanço de cada lado: o ajuste mede um contêiner ligeiramente mais estreito,
+   para a tinta da palavra ficar dentro das margens da grade. */
+.espaco__fit { margin-inline: 1.3%; }
+.espaco .espaco__word {
+  /* fallback pré-hidratação; FitText sobrescreve com o tamanho exato */
+  font-size: min(var(--fs-serif-xl), calc(100cqw / 3.9));
+  line-height: 0.8;
+  /* a caixa de linha tem ~0.166em abaixo da linha de base; a borda inferior da máscara
+     (= borda superior do panorama) fica a 0.12em da linha de base */
+  margin-bottom: -0.046em;
+  color: var(--ivory);
+  font-kerning: none;           /* medição idêntica antes/depois do SplitText */
+  font-feature-settings: "kern" 0;
+  letter-spacing: -0.02em;
+}
+
+.espaco__pano {
+  position: relative;
+  border-radius: var(--radius-img);
+  overflow: hidden;
+  background: #1b130b;
+  aspect-ratio: 560 / 700;
+}
+.espaco__pano-m, .espaco__pano-d { width: 100%; height: 100%; }
+.espaco__pano-d { display: none; }
+@media (min-width: 768px) {
+  .espaco__pano { aspect-ratio: 1000 / 429; }
+  .espaco__pano-m { display: none; }
+  .espaco__pano-d { display: block; }
+}
+
+/* ---------- Linha de legenda ---------- */
+.espaco__caption { margin-top: var(--s6); row-gap: var(--s4); align-items: start; }
+.espaco .espaco__cap-title {
+  grid-column: 1 / -1;
+  font-size: var(--fs-lead);
+  font-stretch: 94%;
+  font-weight: 450;
+  letter-spacing: -0.008em;
+  line-height: 1.3;
+  color: var(--ivory);
+  max-width: 34ch;
+}
+.espaco__label { grid-column: 1 / -1; font-size: var(--fs-micro); line-height: 1.4; font-weight: 500; color: var(--stone); }
+.espaco__desc { grid-column: 1 / -1; font-size: var(--fs-body); color: var(--stone); max-width: 62ch; }
+.espaco__cta { grid-column: 1 / -1; margin-top: var(--s2); }
+.espaco__cta .btn { width: 100%; }
+
+@media (min-width: 768px) {
+  .espaco__cta { margin-top: var(--s3); }
+  .espaco__cta .btn { width: auto; }
+}
+/* lg: duas linhas — título | rótulo, depois descrição | botão */
+@media (min-width: 1024px) {
+  .espaco__caption { margin-top: var(--s7); row-gap: var(--s5); }
+  .espaco .espaco__cap-title { grid-column: 1 / span 6; }
+  .espaco__label { grid-column: 7 / span 6; text-align: right; }
+  .espaco__desc { grid-column: 1 / span 7; }
+  .espaco__cta { grid-column: 8 / span 5; justify-self: end; margin-top: 0; }
+}
+/* xl: as quatro partes numa linha (título · rótulo · descrição · botão) */
+@media (min-width: 1440px) {
+  .espaco .espaco__cap-title { grid-column: 1 / span 3; }
+  .espaco__label { grid-column: 4 / span 2; text-align: left; }
+  .espaco__desc { grid-column: 6 / span 4; }
+  .espaco__cta { grid-column: 10 / span 3; }
+}
+
+/* ---------- Estados iniciais (só com JS e movimento permitido) ---------- */
+.js-motion .espaco:not(.is-static) .espaco__frame { clip-path: inset(0 100% 0 0 round 4px); }
+.js-motion .espaco:not(.is-static) .espaco__rule { transform: scaleX(0); }
+.js-motion .espaco:not(.is-static) .espaco__meta { opacity: 0; }
+.js-motion .espaco:not(.is-static) .espaco__pano img { transform: scale(1.06); }
+.js-motion .espaco:not(.is-static):not(.is-word) .espaco__word { visibility: hidden; }
+
+/* fail-safe: se o GSAP nunca inicializar, tudo aparece após 4s (só enquanto .is-ready não existe) */
+@keyframes espaco-failsafe {
+  to { clip-path: inset(0 0 0 0 round 4px); opacity: 1; transform: none; visibility: visible; }
+}
+.js-motion .espaco:not(.is-ready):not(.is-static) :is(.espaco__frame, .espaco__rule, .espaco__meta, .espaco__pano img) {
+  animation: espaco-failsafe 0s 4s forwards;
+}
+.js-motion .espaco:not(.is-word):not(.is-static) .espaco__word { animation: espaco-failsafe 0s 4s forwards; }
