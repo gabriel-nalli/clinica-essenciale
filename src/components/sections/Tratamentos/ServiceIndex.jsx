@@ -26,8 +26,10 @@ export default function ServiceIndex({ services }) {
   const innerRefs = useRef([]);
   const numRefs = useRef([]);
   const nameRefs = useRef([]);
-  const visibleRef = useRef(0); // slide em repouso, por cima
-  const settleRef = useRef(null); // finaliza a transição em andamento
+  const topRef = useRef(0); // índice mostrado por último (o contador/legenda estão nele)
+  const liveRef = useRef(new Set([0])); // slides com alguma área visível
+  const tlRef = useRef(null); // transição em andamento
+  const zRef = useRef(2);
   const pendingScroll = useRef(null);
   const instantTimer = useRef(0);
   const anchorTimer = useRef(0);
@@ -66,15 +68,18 @@ export default function ServiceIndex({ services }) {
         window.clearTimeout(instantTimer.current);
         instantTimer.current = window.setTimeout(() => {
           if (root) delete root.dataset.instant;
-        }, 120);
+        }, 150);
       }
       holdAnchoring();
       const set = () => setSel({ open: idx, base: idx });
-      if (e && e.isTrusted === false) {
-        // vindo de scrollToHash(): quem chamou rola logo em seguida, então o DOM precisa estar final agora
+      if (e) {
+        // hashchange: o DOM precisa estar final já. Se veio de scrollToHash() (evento sintético),
+        // quem chamou rola logo em seguida; se foi navegação nativa, o navegador já rolou para a
+        // linha ainda fechada, então corrigimos a posição depois do commit.
+        if (e.isTrusted !== false) pendingScroll.current = idx;
         flushSync(set);
       } else {
-        pendingScroll.current = idx; // navegação nativa: corrige a posição depois do commit
+        pendingScroll.current = idx; // carga inicial (hidratação)
         set();
       }
     };
@@ -103,43 +108,54 @@ export default function ServiceIndex({ services }) {
       const names = nameRefs.current;
       if (!slides.length || slides.some((s) => !s)) return undefined;
 
+      // estado de repouso: só `idx` visível
       const settle = (idx) => {
-        visibleRef.current = idx;
+        if (tlRef.current) {
+          tlRef.current.kill();
+          tlRef.current = null;
+        }
+        topRef.current = idx;
+        liveRef.current = new Set([idx]);
+        zRef.current = 2;
         slides.forEach((s, i) => gsap.set(s, { clipPath: i === idx ? FULL : HIDDEN, zIndex: i === idx ? 2 : 1 }));
         inners.forEach((el) => gsap.set(el, { scale: 1 }));
         nums.forEach((el, i) => gsap.set(el, { y: 0, yPercent: i === idx ? 0 : 100 }));
         names.forEach((el, i) => gsap.set(el, { y: 0, yPercent: i === idx ? 0 : 100 }));
       };
 
-      // conclui qualquer transição pendente para partir de um estado conhecido
-      if (settleRef.current) settleRef.current();
-
-      const from = visibleRef.current;
+      const from = topRef.current;
       const to = shown;
-      if (from === to) {
-        settle(to);
-        return undefined;
-      }
-
       const frame = frameRef.current;
       const onScreen = !!frame && frame.getClientRects().length > 0;
       const root = rootRef.current;
-      if (prefersReduced() || !onScreen || (root && root.dataset.instant)) {
+      const instant = prefersReduced() || !onScreen || (root && root.dataset.instant);
+
+      // sem animação, sem mudança, ou voltando a um slide que ainda está (parcialmente) visível
+      if (instant || from === to || liveRef.current.has(to)) {
         settle(to);
         return undefined;
       }
 
+      // uma transição anterior em andamento é interrompida onde está; o novo slide entra por cima
+      if (tlRef.current) {
+        tlRef.current.kill();
+        tlRef.current = null;
+      }
+
       const dir = to > from ? 1 : -1; // descendo a lista: entra de baixo; subindo: entra de cima
-      gsap.set(slides, { zIndex: 1 });
-      gsap.set(slides[from], { zIndex: 2 });
-      gsap.set(slides[to], { zIndex: 3, clipPath: dir > 0 ? HIDDEN : "inset(0% 0% 100% 0%)" });
+      zRef.current += 1;
+      liveRef.current.add(to);
+      gsap.set(slides[to], { zIndex: zRef.current, clipPath: dir > 0 ? HIDDEN : "inset(0% 0% 100% 0%)" });
       gsap.set(inners[to], { scale: 1.06 });
+      nums.forEach((el, i) => i !== from && i !== to && gsap.set(el, { y: 0, yPercent: 100 }));
+      names.forEach((el, i) => i !== from && i !== to && gsap.set(el, { y: 0, yPercent: 100 }));
       gsap.set(nums[to], { y: 0, yPercent: dir * 100 });
       gsap.set(names[to], { y: 0, yPercent: dir * 100 });
+      topRef.current = to;
 
       const tl = gsap.timeline({
         onComplete: () => {
-          settleRef.current = null;
+          tlRef.current = null;
           settle(to);
         },
       });
@@ -149,16 +165,14 @@ export default function ServiceIndex({ services }) {
         .to(nums[from], { yPercent: -dir * 100, duration: 0.3, ease: "ess.out" }, 0)
         .to(names[to], { yPercent: 0, duration: 0.3, ease: "ess.out" }, 0)
         .to(names[from], { yPercent: -dir * 100, duration: 0.3, ease: "ess.out" }, 0);
-      settleRef.current = () => {
-        tl.kill();
-        settleRef.current = null;
-        settle(to);
-      };
+      tlRef.current = tl;
 
       return () => {
         // desmontagem / ciclo do Strict Mode: o contexto reverte os estilos inline
-        settleRef.current = null;
-        visibleRef.current = 0;
+        tlRef.current = null;
+        topRef.current = 0;
+        liveRef.current = new Set([0]);
+        zRef.current = 2;
       };
     },
     { scope: rootRef, dependencies: [shown] }
